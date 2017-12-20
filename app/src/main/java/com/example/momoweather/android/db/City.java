@@ -1,5 +1,7 @@
 package com.example.momoweather.android.db;
 
+import org.litepal.crud.DataSupport;
+
 /**
  * Created by Administrator on 2017/12/18.
  */

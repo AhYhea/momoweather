@@ -1,10 +1,12 @@
 package com.example.momoweather.android.db;
 
+import org.litepal.crud.DataSupport;
+
 /**
  * Created by Administrator on 2017/12/18.
  */
 
-public class Province extends DataSupport {
+public class Province extends DataSupport{
     private int id;
     private String provinceName;
     private int provinceCode;
@@ -32,4 +34,5 @@ public class Province extends DataSupport {
     public void setProvinceCode(int provinceCode) {
         this.provinceCode = provinceCode;
     }
+
 }
