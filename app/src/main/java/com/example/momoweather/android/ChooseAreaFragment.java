@@ -2,6 +2,7 @@ package com.example.momoweather.android;
 
 import android.app.Fragment;
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,6 +35,7 @@ import okhttp3.Response;
  */
 
 public class ChooseAreaFragment extends Fragment{
+
     public static final int LEVEL_PROVINCE = 0;
     public static final int LEVEL_CITY = 1;
     public static final  int LEVEL_COUNTY = 2;
@@ -45,9 +47,10 @@ public class ChooseAreaFragment extends Fragment{
     private List<String> dataList = new ArrayList<>();
     private List<Province> provinceList;//省列表
     private List<City> cityList;
-    private Province selectedProvince;
+    private List<County> countyList;
+    private Province selectedProvince;//选中的城市0
     private City selectedCity;
-    private int currentLevel;
+    private int currentLevel;//当前选中的级别
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -73,6 +76,12 @@ public class ChooseAreaFragment extends Fragment{
                 } else if (currentLevel == LEVEL_CITY){
                     selectedCity = cityList.get(position);
                     queryCounties();
+                } else if (currentLevel == LEVEL_COUNTY) {
+                    String weatherId = countyList.get(position).getWeatherId();
+                    Intent intent = new Intent(getActivity(), WeatherActivity.class);
+                    intent.putExtra("weather_id", weatherId);
+                    startActivity(intent);
+                    getActivity().finish();
                 }
             }
         });
@@ -90,7 +99,7 @@ public class ChooseAreaFragment extends Fragment{
     }
 
     /*
-    查询全国所有的省
+    查询全国所有的省，优先从数据库查询，如果没有查询到再去服务器上查询
      */
     private void queryProvinces(){
         titleText.setText("中国");
@@ -138,7 +147,7 @@ public class ChooseAreaFragment extends Fragment{
     private void queryCounties(){
         titleText.setText(selectedCity.getCityName());
         backButton.setVisibility(View.VISIBLE);
-        List<County> countyList = DataSupport.where("cityid = ?", String.valueOf(selectedCity.getId())).find(County.class);
+        countyList = DataSupport.where("cityid = ?", String.valueOf(selectedCity.getId())).find(County.class);
         if (countyList.size()>0){
             dataList.clear();
             for (County county : countyList) {
